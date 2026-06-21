@@ -32,3 +32,38 @@ Build a minimal production-leaning service that can **handle load**, **rate limi
 - **Scale Plan (10k RPS):** Fill `SCALE.md` with a clear, concise approach (indexes, pooling, caching, queues, horizontal scale, idempotency store).
 
 > We will run additional **hidden concurrency/multi-instance tests** during evaluation.
+
+---
+
+## Live Deployment & API Testing Guide
+
+The service has been deployed live on Render and is accessible at:
+👉 **`https://signals-service-kartavya.onrender.com`**
+
+### API Key (Default)
+All protected endpoints require the `X-API-Key` header:
+- `X-API-Key: change-me`
+
+### API Test Examples
+
+#### 1. Check Service Health
+No authentication required.
+```bash
+curl https://signals-service-kartavya.onrender.com/healthz
+```
+
+#### 2. Post a Signal (Protected)
+```bash
+curl -X POST https://signals-service-kartavya.onrender.com/v1/signals \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: change-me" \
+  -H "Idempotency-Key: test-key-123" \
+  -d '{"userId": "user1", "type": "click", "payload": "button-click"}'
+```
+
+#### 3. Get Signals List (Protected)
+```bash
+curl "https://signals-service-kartavya.onrender.com/v1/signals?userId=user1" \
+  -H "X-API-Key: change-me"
+```
+

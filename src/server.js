@@ -9,7 +9,7 @@ const PORT = Number(process.env.PORT || 8080);
 const app = Fastify({ logger: { level: 'info' } });
 
 app.addHook('onRequest', async (req, reply) => {
-  if (req.url === '/healthz') return;
+  if (req.url === '/healthz' || req.url === '/') return;
   const key = req.headers['x-api-key'];
   if (!key || key !== API_KEY) {
     reply.code(401).send({ error: 'unauthorized' });
@@ -17,6 +17,10 @@ app.addHook('onRequest', async (req, reply) => {
 });
 
 app.get('/healthz', async () => ({ ok: true }));
+app.get('/', async () => ({
+  status: 'online',
+  message: 'Signals Service API is running. Access endpoints with X-API-Key.'
+}));
 app.post('/v1/signals', postSignal);
 app.get('/v1/signals', getSignals);
 
@@ -24,3 +28,4 @@ app.listen({ host: '0.0.0.0', port: PORT }).catch((e) => {
   app.log.error(e);
   process.exit(1);
 });
+

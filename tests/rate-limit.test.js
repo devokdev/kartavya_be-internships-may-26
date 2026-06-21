@@ -6,14 +6,14 @@ import http from 'node:http';
 
 test('rate limit: allow 5 per minute, 6th is 429', async () => {
   const proc = spawn('node', ['src/server.js'], { env: { ...process.env, API_KEY: 'k', PORT: '9092', RATE_LIMIT_PER_MIN: '5' } });
-  await wait(300);
+  await wait(1500);
 
-  const base = 'http://localhost:9092';
+  const base = 'http://127.0.0.1:9092';
   const statuses = [];
   for (let i=0;i<6;i++){
     const code = await postStatus(`${base}/v1/signals`, {
       headers: { 'x-api-key': 'k' },
-      body: { userId: 'u1', type: 'note', payload: String(i) }
+      body: { userId: 'u_rl', type: 'note', payload: String(i) }
     });
     statuses.push(code);
   }
